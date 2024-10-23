@@ -87,7 +87,10 @@ struct CameraView: View {
                     .frame(width: 120)
                     
                     // Analyze button
-                    NavigationLink(destination: AnalyticsView()) {
+                    NavigationLink(destination: AnalyticsView(
+                        diameter: arViewModel.measuredDistance ?? 0,
+                        selectedTree: selectedTree
+                    )) {
                         Text("Analyze")
                             .font(.headline)
                             .foregroundColor(.white)
@@ -98,7 +101,6 @@ struct CameraView: View {
                             )
                             .cornerRadius(10)
                     }
-                    .disabled(arViewModel.measurementState != .complete)
                 }
                 .padding(.vertical, 20)
                 .padding(.horizontal)

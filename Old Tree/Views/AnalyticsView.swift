@@ -1,13 +1,29 @@
-// Views/AnalyticsView.swift
 import SwiftUI
 
 struct AnalyticsView: View {
+    let diameter: Double
+    let selectedTree: TreeType?
+    
+    private let growthFactor = 4.5
+    
+    private var estimatedAge: Int {
+        // Convert diameter to centimeters if it's in meters
+        let diameterInCm = diameter * 100
+        // Calculate age using the growth factor
+        return Int(round(diameterInCm * growthFactor))
+    }
+    
+    private var formattedDiameter: String {
+        String(format: "%.1f cm", diameter * 100)
+    }
+    
     var body: some View {
         VStack(spacing: 25) {
             VStack(alignment: .leading, spacing: 15) {
-                InfoCard(title: "Estimated Age", value: "120 years")
-                InfoCard(title: "Species", value: "Oak")
-                InfoCard(title: "Fun Fact", value: "This tree has lived through both World Wars!")
+                InfoCard(title: "Estimated Age", value: "\(estimatedAge) years")
+                InfoCard(title: "Tree Diameter", value: formattedDiameter)
+                InfoCard(title: "Species", value: selectedTree?.name ?? "Unknown")
+                InfoCard(title: "Fun Fact", value: getFunFact(age: estimatedAge))
             }
             .padding()
             
@@ -30,6 +46,21 @@ struct AnalyticsView: View {
             }
         }
     }
+    
+    private func getFunFact(age: Int) -> String {
+        let currentYear = Calendar.current.component(.year, from: Date())
+        let birthYear = currentYear - age
+        
+        if age < 10 {
+            return "This tree is still very young!"
+        } else if age < 50 {
+            return "This tree was planted around \(birthYear)"
+        } else if age < 100 {
+            return "This tree has been here since \(birthYear)!"
+        } else {
+            return "This tree has been standing since \(birthYear) - that's over a century!"
+        }
+    }
 }
 
 struct InfoCard: View {
@@ -50,5 +81,11 @@ struct InfoCard: View {
         .background(Color.white)
         .cornerRadius(10)
         .shadow(radius: 2)
+    }
+}
+
+#Preview {
+    NavigationView {
+        AnalyticsView(diameter: 0.5, selectedTree: TreeType.types[0])
     }
 }
