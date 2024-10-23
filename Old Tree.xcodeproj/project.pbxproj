@@ -6,6 +6,11 @@
 	objectVersion = 77;
 	objects = {
 
+/* Begin PBXBuildFile section */
+		B4B20B822CC81AB200F1353B /* ARKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B4B20B812CC81AB200F1353B /* ARKit.framework */; };
+		B4B20BB02CC91F3400F1353B /* SwiftUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B4B20BAF2CC91F3400F1353B /* SwiftUI.framework */; };
+/* End PBXBuildFile section */
+
 /* Begin PBXContainerItemProxy section */
 		B4B20B642CC81A6600F1353B /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -27,11 +32,26 @@
 		B4B20B532CC81A6400F1353B /* Old Tree.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Old Tree.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		B4B20B632CC81A6600F1353B /* Old TreeTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "Old TreeTests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		B4B20B6D2CC81A6600F1353B /* Old TreeUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "Old TreeUITests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
+		B4B20B812CC81AB200F1353B /* ARKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ARKit.framework; path = System/Library/Frameworks/ARKit.framework; sourceTree = SDKROOT; };
+		B4B20BAF2CC91F3400F1353B /* SwiftUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SwiftUI.framework; path = System/Library/Frameworks/SwiftUI.framework; sourceTree = SDKROOT; };
 /* End PBXFileReference section */
+
+/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		B4B20BB12CC9204100F1353B /* Exceptions for "Old Tree" folder in "Old Tree" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Info.plist,
+			);
+			target = B4B20B522CC81A6400F1353B /* Old Tree */;
+		};
+/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		B4B20B552CC81A6400F1353B /* Old Tree */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				B4B20BB12CC9204100F1353B /* Exceptions for "Old Tree" folder in "Old Tree" target */,
+			);
 			path = "Old Tree";
 			sourceTree = "<group>";
 		};
@@ -52,6 +72,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B4B20BB02CC91F3400F1353B /* SwiftUI.framework in Frameworks */,
+				B4B20B822CC81AB200F1353B /* ARKit.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -78,6 +100,7 @@
 				B4B20B552CC81A6400F1353B /* Old Tree */,
 				B4B20B662CC81A6600F1353B /* Old TreeTests */,
 				B4B20B702CC81A6600F1353B /* Old TreeUITests */,
+				B4B20B802CC81AB200F1353B /* Frameworks */,
 				B4B20B542CC81A6400F1353B /* Products */,
 			);
 			sourceTree = "<group>";
@@ -90,6 +113,15 @@
 				B4B20B6D2CC81A6600F1353B /* Old TreeUITests.xctest */,
 			);
 			name = Products;
+			sourceTree = "<group>";
+		};
+		B4B20B802CC81AB200F1353B /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				B4B20BAF2CC91F3400F1353B /* SwiftUI.framework */,
+				B4B20B812CC81AB200F1353B /* ARKit.framework */,
+			);
+			name = Frameworks;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -396,6 +428,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"Old Tree/Preview Content\"";
+				DEVELOPMENT_TEAM = A754AD89WQ;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
@@ -424,6 +457,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"Old Tree/Preview Content\"";
+				DEVELOPMENT_TEAM = A754AD89WQ;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
