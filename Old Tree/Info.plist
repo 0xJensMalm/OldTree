@@ -2,13 +2,15 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
-	<key>NSCameraUsageDescription</key>
-	<string>Please allow access to camera to be able to measure the age of trees</string>
-	<key>CFBundleIdentifier</key>
-	<string></string>
-	<key>UIRequiredDeviceCapabilities</key>
-	<array>
-		<string>arkit</string>
-	</array>
+    <key>NSCameraUsageDescription</key>
+    <string>Please allow access to camera to be able to measure the age of trees</string>
+    <key>Privacy - Camera Usage Description</key>
+    <string>Please allow access to camera to be able to measure the age of trees</string>
+    <key>CFBundleIdentifier</key>
+    <string></string>
+    <key>UIRequiredDeviceCapabilities</key>
+    <array>
+        <string>arkit</string>
+    </array>
 </dict>
 </plist>

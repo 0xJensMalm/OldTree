@@ -1,3 +1,4 @@
+// ARViewModel.swift
 import RealityKit
 import ARKit
 import Combine
@@ -7,6 +8,7 @@ class ARViewModel: NSObject, ObservableObject {
     @Published var measuredDistance: Double?
     @Published var measurementState: MeasurementState = .ready
     @Published var isPlaneDetected: Bool = false
+    @Published var arSessionError: String?
     
     private var startPoint: SIMD3<Float>?
     private var endPoint: SIMD3<Float>?
@@ -20,8 +22,18 @@ class ARViewModel: NSObject, ObservableObject {
     }
     
     func setupAR(_ arView: ARView) {
+        // Check if device supports AR
+        guard ARWorldTrackingConfiguration.isSupported else {
+            arSessionError = "AR is not supported on this device"
+            return
+        }
+        
         let configuration = ARWorldTrackingConfiguration()
         configuration.planeDetection = [.horizontal, .vertical]
+        
+        // Reset any existing session
+        arView.session.pause()
+        arView.scene.anchors.removeAll()
         
         // Enable more accurate distance measurements
         if ARWorldTrackingConfiguration.supportsSceneReconstruction(.mesh) {
@@ -29,7 +41,9 @@ class ARViewModel: NSObject, ObservableObject {
         }
         
         arView.session.delegate = self
-        arView.session.run(configuration)
+        
+        // Start new session with reset options
+        arView.session.run(configuration, options: [.resetTracking, .removeExistingAnchors])
         
         // Add coaching overlay
         let coachingOverlay = ARCoachingOverlayView()
@@ -151,13 +165,33 @@ extension ARViewModel: ARSessionDelegate {
     func session(_ session: ARSession, didAdd anchors: [ARAnchor]) {
         if !isPlaneDetected {
             if anchors.contains(where: { $0 is ARPlaneAnchor }) {
-                isPlaneDetected = true
+                DispatchQueue.main.async {
+                    self.isPlaneDetected = true
+                }
             }
         }
     }
     
     func session(_ session: ARSession, didFailWithError error: Error) {
-        // Handle errors
-        print("AR Session failed: \(error.localizedDescription)")
+        DispatchQueue.main.async {
+            self.arSessionError = error.localizedDescription
+            print("AR Session failed: \(error)")
+        }
+    }
+    
+    func sessionWasInterrupted(_ session: ARSession) {
+        DispatchQueue.main.async {
+            self.arSessionError = "AR Session was interrupted"
+        }
+    }
+    
+    func sessionInterruptionEnded(_ session: ARSession) {
+        DispatchQueue.main.async {
+            self.arSessionError = nil
+            // Reset the session
+            if let configuration = session.configuration {
+                session.run(configuration, options: [.resetTracking, .removeExistingAnchors])
+            }
+        }
     }
 }
