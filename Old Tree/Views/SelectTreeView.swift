@@ -1,32 +1,39 @@
-// Views/SelectTreeView.swift
 import SwiftUI
 
 struct SelectTreeView: View {
     @State private var selectedTree: TreeType?
     
+    // Define grid layout
+    private let columns = [
+        GridItem(.flexible(), spacing: 16),
+        GridItem(.flexible(), spacing: 16)
+    ]
+    
     var body: some View {
-        VStack(spacing: 30) {
+        VStack(spacing: 24) {
             Text("Which tree do you have in front of you?")
                 .font(.title2)
                 .foregroundColor(TreeTheme.darkGreen)
                 .multilineTextAlignment(.center)
                 .padding(.horizontal)
+                .padding(.top)
             
-            LazyVGrid(columns: [
-                GridItem(.flexible()),
-                GridItem(.flexible())
-            ], spacing: 20) {
+            LazyVGrid(columns: columns, spacing: 16) {
                 ForEach(TreeType.types) { tree in
                     TreeSelectionCard(
                         tree: tree,
                         isSelected: selectedTree?.id == tree.id,
                         action: {
-                            selectedTree = tree
+                            withAnimation(.spring(response: 0.3)) {
+                                selectedTree = tree
+                            }
                         }
                     )
                 }
             }
-            .padding()
+            .padding(.horizontal)
+            
+            Spacer()
             
             NavigationLink(destination: CameraView(selectedTree: selectedTree)) {
                 HStack {
@@ -41,6 +48,7 @@ struct SelectTreeView: View {
             }
             .disabled(selectedTree == nil)
             .padding(.horizontal, 40)
+            .padding(.bottom)
         }
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {
@@ -60,22 +68,55 @@ struct TreeSelectionCard: View {
     
     var body: some View {
         Button(action: action) {
-            VStack(spacing: 15) {
-                Image(systemName: tree.icon)
-                    .font(.system(size: 40))
-                Text(tree.name)
-                    .font(.headline)
+            VStack(alignment: .leading, spacing: 8) {
+                HStack {
+                    Circle()
+                        .fill(isSelected ? TreeTheme.leafGreen : TreeTheme.darkGreen)
+                        .frame(width: 32, height: 32)
+                        .overlay {
+                            Image(systemName: tree.icon)
+                                .font(.system(size: 16))
+                                .foregroundColor(.white)
+                        }
+                    
+                    Text(tree.name)
+                        .font(.headline)
+                }
+                
+                Text(tree.description)
+                    .font(.caption)
+                    .foregroundColor(TreeTheme.darkGreen.opacity(0.8))
+                    .lineLimit(2)
+                    .fixedSize(horizontal: false, vertical: true)
+                
+                Text("Can be up to \(tree.maxAge) years")
+                    .font(.caption2)
+                    .padding(.vertical, 3)
+                    .padding(.horizontal, 6)
+                    .background(
+                        Capsule()
+                            .fill(TreeTheme.leafGreen.opacity(0.2))
+                    )
+                    .foregroundColor(TreeTheme.darkGreen)
             }
-            .frame(maxWidth: .infinity)
-            .padding()
-            .background(isSelected ? TreeTheme.leafGreen : Color.white)
-            .foregroundColor(isSelected ? .white : TreeTheme.darkGreen)
-            .cornerRadius(15)
-            .shadow(radius: 2)
+            .padding(12)
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .background(Color.white)
+            .cornerRadius(12)
+            .shadow(color: Color.black.opacity(0.05), radius: 5, x: 0, y: 2)
             .overlay(
-                RoundedRectangle(cornerRadius: 15)
+                RoundedRectangle(cornerRadius: 12)
                     .stroke(isSelected ? TreeTheme.darkGreen : Color.clear, lineWidth: 2)
             )
         }
+        .buttonStyle(ScaleButtonStyle())
+    }
+}
+
+struct ScaleButtonStyle: ButtonStyle {
+    func makeBody(configuration: Configuration) -> some View {
+        configuration.label
+            .scaleEffect(configuration.isPressed ? 0.98 : 1.0)
+            .animation(.easeInOut(duration: 0.2), value: configuration.isPressed)
     }
 }
