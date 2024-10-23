@@ -1,101 +1,78 @@
 // Views/CameraView.swift
+
 import SwiftUI
+import RealityKit
+import ARKit
+
+struct ARMeasurementView: UIViewRepresentable {
+    @ObservedObject var viewModel: ARViewModel
+    
+    func makeUIView(context: Context) -> ARView {
+        let arView = ARView(frame: .zero)
+        viewModel.setupAR(arView)
+        return arView
+    }
+    
+    func updateUIView(_ uiView: ARView, context: Context) {
+        // Update view if needed
+    }
+}
 
 struct CameraView: View {
     let selectedTree: TreeType?
+    @StateObject private var arViewModel = ARViewModel()
     
-    @State private var points: [CGPoint] = []
-    @State private var lineLength: CGFloat = 0
-    
-    var canAnalyze: Bool {
-        points.count == 2
+    // Helper function to get the ARView
+    private func getARView() -> ARView? {
+        guard let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
+              let window = windowScene.windows.first
+        else { return nil }
+        
+        return window.rootViewController?.view as? ARView
     }
     
     var body: some View {
-        VStack {
-            // Placeholder for camera view with measurement overlay
-            GeometryReader { geometry in
-                ZStack {
-                    Color.black.opacity(0.8)
-                        .overlay(
-                            Text("Camera Placeholder")
-                                .foregroundColor(.white)
-                        )
-                    
-                    // Measurement points and line
-                    ForEach(points.indices, id: \.self) { index in
-                        Circle()
-                            .fill(TreeTheme.leafGreen)
-                            .frame(width: 20, height: 20)
-                            .position(points[index])
-                    }
-                    
-                    if points.count == 2 {
-                        Path { path in
-                            path.move(to: points[0])
-                            path.addLine(to: points[1])
-                        }
-                        .stroke(TreeTheme.leafGreen, lineWidth: 2)
-                        
-                        // Show measurement text
-                        Text(String(format: "%.1f cm", lineLength))
-                            .foregroundColor(.white)
-                            .padding(8)
-                            .background(TreeTheme.darkGreen)
-                            .cornerRadius(8)
-                            .position(
-                                x: (points[0].x + points[1].x) / 2,
-                                y: (points[0].y + points[1].y) / 2 - 20
-                            )
-                    }
-                }
-                .contentShape(Rectangle())
-                .onTapGesture { location in
-                    if points.count < 2 {
-                        points.append(location)
-                        if points.count == 2 {
-                            // Calculate line length (this would be converted to real-world units in production)
-                            let dx = points[1].x - points[0].x
-                            let dy = points[1].y - points[0].y
-                            lineLength = sqrt(dx * dx + dy * dy) / 2 // Arbitrary scaling for demo
-                        }
-                    }
-                }
-            }
+        ZStack {
+            ARMeasurementView(viewModel: arViewModel)
+                .ignoresSafeArea()
             
-            VStack(spacing: 20) {
-                Text(selectedTree?.name ?? "Selected Tree")
-                    .font(.headline)
-                    .foregroundColor(TreeTheme.darkGreen)
-                
-                Text("Tap two points to measure tree diameter")
-                    .foregroundColor(TreeTheme.darkGreen)
-                    .padding()
-                    .background(Color.white.opacity(0.9))
-                    .cornerRadius(10)
-                
-                HStack(spacing: 20) {
-                    Button(action: resetMeasurement) {
-                        Text("Reset")
-                            .padding()
-                            .frame(width: 120)
-                            .background(TreeTheme.forestBrown)
-                            .foregroundColor(.white)
-                            .cornerRadius(10)
+            VStack {
+                // Measurement status and instructions
+                switch arViewModel.measurementState {
+                case .ready:
+                    if arViewModel.isPlaneDetected {
+                        InstructionView(text: "Tap to set first point")
+                    } else {
+                        InstructionView(text: "Move camera to detect surfaces")
                     }
-                    
-                    NavigationLink(destination: AnalyticsView()) {
-                        Text("Analyze")
-                            .padding()
-                            .frame(width: 120)
-                            .background(canAnalyze ? TreeTheme.leafGreen : TreeTheme.leafGreen.opacity(0.5))
-                            .foregroundColor(.white)
-                            .cornerRadius(10)
+                case .firstPointSet:
+                    InstructionView(text: "Tap to set second point")
+                case .complete:
+                    if let distance = arViewModel.measuredDistance {
+                        MeasurementResultView(distance: distance)
                     }
-                    .disabled(!canAnalyze)
                 }
+                
+                Spacer()
+                
+                // Controls
+                HStack {
+                    Button("Reset") {
+                        if let arView = getARView() {
+                            arViewModel.resetMeasurement(in: arView)
+                        }
+                    }
+                    .buttonStyle(.borderedProminent)
+                    
+                    if arViewModel.measurementState == .complete {
+                        NavigationLink(destination: AnalyticsView()) {
+                            Text("Continue")
+                        }
+                        .buttonStyle(.borderedProminent)
+                    }
+                }
+                .padding()
             }
-            .padding()
         }
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {
@@ -106,9 +83,33 @@ struct CameraView: View {
             }
         }
     }
+}
+struct InstructionView: View {
+    let text: String
     
-    private func resetMeasurement() {
-        points.removeAll()
-        lineLength = 0
+    var body: some View {
+        Text(text)
+            .font(.headline)
+            .padding()
+            .background(.ultraThinMaterial)
+            .cornerRadius(10)
+            .padding()
+    }
+}
+
+struct MeasurementResultView: View {
+    let distance: Double
+    
+    var body: some View {
+        VStack {
+            Text("Diameter")
+                .font(.headline)
+            Text(String(format: "%.2f meters", distance))
+                .font(.title2)
+        }
+        .padding()
+        .background(.ultraThinMaterial)
+        .cornerRadius(10)
+        .padding()
     }
 }

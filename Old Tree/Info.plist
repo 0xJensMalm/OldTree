@@ -3,6 +3,12 @@
 <plist version="1.0">
 <dict>
 	<key>NSCameraUsageDescription</key>
-	<string>This app requires access to the camera for using the measuring device</string>
+	<string>Please allow access to camera to be able to measure the age of trees</string>
+	<key>CFBundleIdentifier</key>
+	<string></string>
+	<key>UIRequiredDeviceCapabilities</key>
+	<array>
+		<string>arkit</string>
+	</array>
 </dict>
 </plist>
