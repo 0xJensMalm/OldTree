@@ -11,7 +11,7 @@ struct HomeView: View {
                 .font(.system(size: 60))
                 .foregroundColor(TreeTheme.leafGreen)
             
-            Text("Old Tree")
+            Text("Tree Tales")
                 .font(.largeTitle)
                 .foregroundColor(TreeTheme.darkGreen)
             

@@ -1,10 +1,11 @@
+// Models/TreeTypes.swift
 import SwiftUI
 import Foundation
 
 struct TreeType: Identifiable {
     let id = UUID()
     let name: String
-    let icon: String // SF Symbol name
+    let imageName: String // Changed from icon to imageName
     let description: String
     let maxAge: Int
     let growthFactor: Double
@@ -12,28 +13,28 @@ struct TreeType: Identifiable {
     static let types = [
         TreeType(
             name: "Spruce",
-            icon: "leaf.arrow.triangle.circlepath",
+            imageName: "spruce", // Changed to use custom image
             description: "Fast-growing evergreen with straight trunk and cone-shaped crown",
             maxAge: 350,
             growthFactor: 0.7
         ),
         TreeType(
             name: "Pine",
-            icon: "leaf.circle",
+            imageName: "pine", // Changed to use custom image
             description: "Tall evergreen with distinctive bark and needle-like leaves",
             maxAge: 450,
             growthFactor: 0.6
         ),
         TreeType(
             name: "Birch",
-            icon: "leaf.fill",
+            imageName: "birch", // Changed to use custom image
             description: "Graceful deciduous tree with distinctive white bark",
             maxAge: 200,
             growthFactor: 0.5
         ),
         TreeType(
             name: "Oak",
-            icon: "leaf.circle.fill",
+            imageName: "oak", // Changed to use custom image
             description: "Majestic hardwood known for its strong, dense wood",
             maxAge: 1000,
             growthFactor: 0.8
