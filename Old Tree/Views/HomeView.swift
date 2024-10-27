@@ -6,47 +6,57 @@ struct HomeView: View {
     @State private var showingCameraAlert = false
     
     var body: some View {
-        VStack(spacing: 30) {
-            Image(systemName: "leaf.fill")
-                .font(.system(size: 60))
-                .foregroundColor(TreeTheme.leafGreen)
-            
-            Text("Tree Tales")
-                .font(.largeTitle)
-                .foregroundColor(TreeTheme.darkGreen)
-            
-            NavigationLink(destination: SelectTreeView()) {
-                HStack {
-                    Image(systemName: "camera.fill")
-                        .font(.title2)
-                    Text("Analyze Tree")
-                        .font(.title2)
-                }
-                .padding()
-                .frame(maxWidth: .infinity)
-                .background(TreeTheme.darkGreen)
-                .foregroundColor(.white)
-                .cornerRadius(15)
-            }
-            .padding(.horizontal, 40)
-            .onAppear(perform: checkCameraAuthorization)
-            .alert("Camera Access Required", isPresented: $showingCameraAlert) {
-                Button("Go to Settings", role: .none) {
-                    if let settingsURL = URL(string: UIApplication.openSettingsURLString) {
-                        UIApplication.shared.open(settingsURL)
-                    }
-                }
-                Button("Cancel", role: .cancel) {}
-            } message: {
-                Text("Please allow camera access in Settings to measure trees.")
-            }
-        }
-        .frame(maxWidth: .infinity, maxHeight: .infinity)
-        .background {
-            Image("bg") // Your background image
+        ZStack {
+            // Background
+            Image("bg")
                 .resizable()
                 .scaledToFill()
                 .ignoresSafeArea()
+            
+            // Subtle dark overlay for readability
+            Color.black.opacity(0.3)
+                .ignoresSafeArea()
+            
+            // Main Content
+            VStack(spacing: 40) {
+                // Title Area
+                VStack(spacing: 16) {
+                    Image(systemName: "leaf.fill")
+                        .font(.system(size: 60))
+                        .foregroundColor(.black)
+                    
+                    Text("Tree Tales")
+                        .font(.system(size: 40, weight: .bold, design: .rounded))
+                        .foregroundColor(.black)
+                }
+                
+                Spacer()
+                
+                // Centered Button
+                NavigationLink(destination: SelectTreeView()) {
+                    Text("Get Started")
+                        .font(.system(size: 20, weight: .medium))
+                        .frame(width: 220, height: 60)
+                        .background(Color.black)
+                        .cornerRadius(12)
+                        .foregroundColor(.white)
+                }
+                .buttonStyle(ButtonStyles.Scale())
+                
+                Spacer()
+            }
+            .padding(.vertical, 50)
+        }
+        .onAppear(perform: checkCameraAuthorization)
+        .alert("Camera Access Required", isPresented: $showingCameraAlert) {
+            Button("Go to Settings", role: .none) {
+                if let settingsURL = URL(string: UIApplication.openSettingsURLString) {
+                    UIApplication.shared.open(settingsURL)
+                }
+            }
+            Button("Cancel", role: .cancel) {}
+        } message: {
+            Text("Please allow camera access in Settings to measure trees.")
         }
     }
     
@@ -69,6 +79,14 @@ struct HomeView: View {
         @unknown default:
             isCameraAuthorized = false
             showingCameraAlert = true
+        }
+    }
+}
+
+struct HomeView_Previews: PreviewProvider {
+    static var previews: some View {
+        NavigationView {
+            HomeView()
         }
     }
 }
